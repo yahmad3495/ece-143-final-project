@@ -28,3 +28,4 @@ import numpy as np       # For numerical computations
 from functools import reduce  # For functional programming tools
 import matplotlib.pyplot as plt  # For data visualization
 import seaborn as sns    # For enhanced data visualizations
+import geopandas as gpd # For heatmap data visualization of neighborhood
