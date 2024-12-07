@@ -1,68 +1,131 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[ ]:
+# In[1]:
 
 
 import pandas as pd
 import numpy as np
 from functools import reduce
 
+# Load the dataset
+"""
+Reads the raw dataset from a CSV file and displays its structure and initial rows.
+
+Input:
+    - CSV file located at 'datasets/san_diego_listings.csv'
+
+Output:
+    - Displays the first few rows of the dataset
+    - Prints the shape and columns of the dataset
+"""
 df = pd.read_csv('datasets/san_diego_listings.csv')
-df.head()
+print(df.head())
+print("Dataset shape:", df.shape)
+print("Dataset columns:", df.columns)
 
-df.shape
+# Drop columns that are not relevant for the analysis
+"""
+Drops columns from the dataset that are not needed for analysis to simplify the data.
 
-df.columns
-
-## drop columns that we are not using
-columns_to_drop = ['listing_url', 'scrape_id', 'last_scraped', 'source', 'description', 'neighborhood_overview', 'picture_url', 
-                   'host_url', 'host_location', 'host_about', 'host_thumbnail_url', 'host_picture_url', 'host_neighbourhood', 
-                   'host_listings_count', 'host_total_listings_count', 'host_verifications', 'host_has_profile_pic', 
-                   'neighbourhood', 'neighbourhood_group_cleansed', 'minimum_minimum_nights', 'maximum_minimum_nights', 
-                   'minimum_maximum_nights', 'maximum_maximum_nights', 'minimum_nights_avg_ntm', 'maximum_nights_avg_ntm', 
-                   'calendar_updated', 'has_availability', 'calendar_last_scraped', 'first_review', 'last_review', 'license', 
-                   'instant_bookable', 'calculated_host_listings_count', 'calculated_host_listings_count_entire_homes',
-                   'calculated_host_listings_count_private_rooms', 'calculated_host_listings_count_shared_rooms']
+Columns dropped:
+    - Metadata, URLs, host-specific details, and unused metrics
+"""
+columns_to_drop = [
+    'listing_url', 'scrape_id', 'last_scraped', 'source', 'description', 
+    'neighborhood_overview', 'picture_url', 'host_url', 'host_location', 
+    'host_about', 'host_thumbnail_url', 'host_picture_url', 
+    'host_neighbourhood', 'host_listings_count', 'host_total_listings_count', 
+    'host_verifications', 'host_has_profile_pic', 'neighbourhood', 
+    'neighbourhood_group_cleansed', 'minimum_minimum_nights', 
+    'maximum_minimum_nights', 'minimum_maximum_nights', 
+    'maximum_maximum_nights', 'minimum_nights_avg_ntm', 
+    'maximum_nights_avg_ntm', 'calendar_updated', 'has_availability', 
+    'calendar_last_scraped', 'first_review', 'last_review', 'license', 
+    'instant_bookable', 'calculated_host_listings_count', 
+    'calculated_host_listings_count_entire_homes', 
+    'calculated_host_listings_count_private_rooms', 
+    'calculated_host_listings_count_shared_rooms'
+]
 df.drop(columns=columns_to_drop, inplace=True)
-df.head()
+print("Columns after dropping unnecessary ones:", df.columns)
 
-df.columns
+# Clean the 'price' column
+"""
+Converts the 'price' column from string format to numeric format by removing dollar signs 
+and commas and converting to a numeric type.
 
-## For price column, convert to numeric only format
+Handles:
+    - Removing '$' and ',' symbols from prices
+    - Converts prices to numeric data type
+"""
 df['price'] = df['price'].str.replace('$', '', regex=False)
 df['price'] = df['price'].str.replace(',', '', regex=False)
 df['price'] = pd.to_numeric(df['price'])
 
-numeric_columns = ['accommodates', 'bathrooms', 'bedrooms', 'beds', 'price', 'minimum_nights', 'maximum_nights',
-                   'availability_30', 'availability_60', 'availability_90', 'availability_365', 'number_of_reviews', 
-                   'number_of_reviews_ltm', 'number_of_reviews_l30d', 'review_scores_rating', 'review_scores_accuracy',
-                   'review_scores_cleanliness', 'review_scores_checkin', 'review_scores_communication', 
-                   'review_scores_location', 'review_scores_value', 'reviews_per_month']
+# Convert selected columns to numeric data type
+"""
+Ensures all numeric columns are properly converted to numerical types and handles 
+non-numeric data by coercing errors to NaN.
+
+Numeric Columns:
+    - Includes accommodation metrics, availability, and review scores
+"""
+numeric_columns = [
+    'accommodates', 'bathrooms', 'bedrooms', 'beds', 'price', 
+    'minimum_nights', 'maximum_nights', 'availability_30', 
+    'availability_60', 'availability_90', 'availability_365', 
+    'number_of_reviews', 'number_of_reviews_ltm', 
+    'number_of_reviews_l30d', 'review_scores_rating', 
+    'review_scores_accuracy', 'review_scores_cleanliness', 
+    'review_scores_checkin', 'review_scores_communication', 
+    'review_scores_location', 'review_scores_value', 
+    'reviews_per_month'
+]
 for col in numeric_columns:
     df[col] = pd.to_numeric(df[col], errors='coerce')
 
-rows_with_missing = df[df.isna().any(axis=1)]
+# Identify and handle missing values
+"""
+Identifies rows with missing values and removes them to ensure a clean dataset.
 
-# Display the rows with missing values
+Output:
+    - Displays rows with missing values
+    - Drops rows with any missing values and shows updated dataset shape
+"""
+rows_with_missing = df[df.isna().any(axis=1)]
+print("Rows with missing values:")
 print(rows_with_missing)
 
-## drop rows that has missing values
 df_cleaned = df.dropna()
-df_cleaned.shape
+print("Cleaned dataset shape:", df_cleaned.shape)
 
+# Summary of missing data
+"""
+Provides a summary of missing data in the cleaned dataset.
+
+Output:
+    - Prints the count of missing values for each column (should be zero after cleaning)
+"""
 missing_data_summary = df_cleaned.isnull().sum()
 print("Missing data summary:\n", missing_data_summary)
 
-## sort data with id
+# Sort data by 'id' and save cleaned dataset
+"""
+Sorts the cleaned dataset by the 'id' column and exports the final cleaned data 
+to a new CSV file.
+
+Output:
+    - Sorted dataset saved as 'san_diego_listing_cleaned.csv'
+"""
 df_sorted = df_cleaned.sort_values(by='id')
-df_sorted.head()
+print("First few rows of sorted dataset:")
+print(df_sorted.head())
 
 df_sorted.to_csv('san_diego_listing_cleaned.csv', index=False)
 
 
-
-# In[ ]:
+# In[2]:
 
 
 import pandas as pd 
@@ -70,11 +133,18 @@ import numpy as np
 #make pandas display all columns
 pd.set_option('display.max_columns', None)
 
+
+"""
+    Load and clean the dataset by handling missing values and removing unnecessary columns.
+    Parameters:
+        filepath (str): Path to the CSV file.
+    Returns:
+        pd.DataFrame: A cleaned dataset with processed columns.
+"""
+
+
 san_diego = pd.read_csv('san_diego_listing_cleaned.csv')
 san_diego.head()
-
-
-
 numeric_df = san_diego.drop(columns=["id", "name", "host_name", "amenities", "host_since", "bathrooms_text"], axis=1)
 
 numeric_df["host_response_rate"] = numeric_df["host_response_rate"].str.replace("%", "").astype(float)
@@ -89,6 +159,13 @@ for col in numeric_df.select_dtypes(include=['object']).columns:
     print(numeric_df[col].value_counts())
 
 
+    
+"""
+    Find and display the most positively and negatively correlated features with a target column.
+    Parameters:
+        numeric_df (pd.DataFrame): DataFrame containing numeric data.
+        target_column (str): The column for which to calculate correlations.
+"""
 #co
 #Find correlation matrix
 corr_matrix = numeric_df.corr()
@@ -151,6 +228,13 @@ print(corr_rating[:10])
 print("10 most negatively correlated features with review_scores_rating without review_scores_* and host_is_superhost_* columns")
 print(corr_rating[-10:])
 
+
+"""
+    Analyze average prices by neighborhood and visualize top and bottom neighborhoods.
+    Parameters:
+        san_diego (pd.DataFrame): The original dataset.
+"""
+
 import matplotlib.pyplot as plt
 
 # Group by neighborhood and calculate the average price
@@ -192,6 +276,13 @@ plt.tight_layout()
 
 # Show the plot
 plt.show()
+
+
+"""
+    Divide neighborhoods into price-based tiers and visualize price relationships.
+    Parameters:
+        san_diego (pd.DataFrame): The original dataset.
+"""
 
 
 import matplotlib.pyplot as plt
@@ -422,7 +513,11 @@ plot_relationship_with_longitude_tiers(neighborhood_stats, 'avg_accommodates', '
 plot_relationship_with_longitude_tiers(neighborhood_stats, 'avg_beds', 'Beds')
 
 
-
+"""
+    Compute average yearly income and years to reach $1M revenue for filtered data.
+    Parameters:
+        filepath (str): Path to the cleaned dataset.
+"""
 
 # Calculate average price for each longitude-based tier
 tier_price_stats = san_diego.groupby('neighbourhood_cleansed').agg(
