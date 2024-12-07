@@ -655,3 +655,41 @@ plt.show()
 
 
 
+# In[ ]:
+import pandas as pd
+import geopandas as gpd
+import matplotlib.pyplot as plt
+
+san_diego_data = pd.read_csv('san_diego_listing_cleaned.csv')
+san_diego_shapefile = "neighborhoods/sandiego.geojson"
+
+los_angeles_data = pd.read_csv('los_angeles_listing_cleaned.csv')
+los_angeles_shapefile = "neighborhoods/losangeles.geojson"
+
+def plot(shapefile_path, data, title):
+    """
+    Plot the given airbnb on the map using the shapefile as the map background.
+    """
+    gdf = gpd.read_file(shapefile_path)
+
+    average_price_per_neighborhood = data.groupby('neighbourhood_cleansed')['price'].mean().sort_values()
+    # print(average_price_per_neighborhood)
+    # Plot the neighborhoods
+    fig, ax = plt.subplots(figsize=(10, 10))
+    gdf.plot(ax=ax, color='lightblue', edgecolor='black')
+
+    # Plot the average price per neighborhood
+    gdf['average_price'] = gdf['neighbourhood'].map(average_price_per_neighborhood)
+    gdf.plot(column='average_price', ax=ax, legend=True, legend_kwds={'label': "Average Price per Night"})
+
+    #rotate the x-axis labels
+    plt.xticks(rotation=45)
+    plt.xlabel('Longitude')
+    plt.ylabel('Latitude')
+    plt.title('Average Price per Night vs. Neighborhood in {}'.format(title))
+    plt.tight_layout()
+
+#Plot san diego first then los angeles
+plot(san_diego_shapefile, san_diego_data, "San Diego")
+plot(los_angeles_shapefile, los_angeles_data, "Los Angeles")
+# %%
