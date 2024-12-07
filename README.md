@@ -1,15 +1,24 @@
-# ece-143-final-project
-Repository that contains all of our code for ece-143
+repository for ECE-143 Final Project! This repository contains all the code and resources developed for our project.
 
-ece143_grp12_final.py contains the final .py file that contains all our code. 
+Project Structure : 
+ece143_grp12_final.py:
+This is the main Python file containing all the code for the project. It is organized into two main sections:
 
-The first part of the file goes into datasets/san_diego_listings.csv and it cleans up the csv file and spits out cleaned san_diego_listing_cleaned.csv
-The second part of the code does data analysis on the cleaned up csv file and then produces graphs
+Dataset Cleaning:
+Processes the dataset datasets/san_diego_listings.csv.
+Produces a cleaned version of the dataset named san_diego_listing_cleaned.csv.
+Data Analysis and Visualization:
+Performs data analysis on the cleaned dataset.
+Generates graphs to visualize the insights.
+datasets/san_diego_listings.csv:
+The original dataset used for analysis.
 
-The modules we are using in our code are : 
+san_diego_listing_cleaned.csv:
+The cleaned version of the dataset created during the data cleaning process.
 
-import pandas as pd
-import numpy as np
-from functools import reduce
-import matplotlib.pyplot as plt
-import seaborn as sns
+The following Python libraries are used in this project:
+import pandas as pd      # For data manipulation and analysis
+import numpy as np       # For numerical computations
+from functools import reduce  # For functional programming tools
+import matplotlib.pyplot as plt  # For data visualization
+import seaborn as sns    # For enhanced data visualizations
