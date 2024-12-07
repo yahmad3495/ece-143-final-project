@@ -13,11 +13,17 @@ repository for **ECE-143 Final Project**! This repository contains all the code 
      - Performs data analysis on the cleaned dataset.  
      - Generates graphs to visualize the insights.
 
+- **`ece143_grp12_final.ipynb`**:
+  This Jupyter Notebook contains all the visualizations we use in the presentation.
+
 - **`datasets/san_diego_listings.csv`**:  
   The original dataset used for analysis.  
 
 - **`san_diego_listing_cleaned.csv`**:  
   The cleaned version of the dataset created during the data cleaning process.
+
+- **`individual notebook`**:
+  This folder contains all pieces of notebook we used.
 
 ## Libraries Used
 
